@@ -6,6 +6,7 @@ PortThread::PortThread(QString name)
 {
     m_name = name;
     mbIsRunning = false;
+    state = __Thread_Stop;
 }
 
 PortThread::~PortThread()
@@ -74,13 +75,12 @@ void PortThread::Stop()
 
 void PortThread::run()
 {
-    qDebug() << "PortThread run:" << m_name;
+    qDebug()<< "PortThread run:" << m_name;
     while(mbIsRunning) {
         foreach (Vendor *pVendor, m_VendorList) {
-            if(!mbIsRunning) {
-                return;
-            }
-            if(pVendor != NULL) {
+            if(!mbIsRunning)
+                break;
+            if(pVendor != Q_NULLPTR) {
                 pVendor->doLoop();
             }
         }

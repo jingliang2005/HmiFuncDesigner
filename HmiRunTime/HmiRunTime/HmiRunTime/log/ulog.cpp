@@ -6,7 +6,6 @@
 #include <QSettings>
 #include <QCoreApplication>
 #include <cstdio>
-#include <debugapi.h>
 #include <QMutexLocker>
 #include <QMutex>
 
@@ -85,6 +84,10 @@ QString GetCfgString(QString sFileName,
 
 void SelfLogOutputHandler(QtMsgType type, const QMessageLogContext &context, const QString &text)
 {
+    //加锁,防止多线程中qdebug太频繁导致崩溃
+    static QMutex mutex;
+    QMutexLocker locker(&mutex);
+
     Q_UNUSED(context)
     switch(type) {
         case QtDebugMsg:
@@ -99,13 +102,13 @@ void SelfLogOutputHandler(QtMsgType type, const QMessageLogContext &context, con
         case QtFatalMsg:
             LogFatal(text);
             break;
+#if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)
         case QtInfoMsg:
             LogInfo(text);
             break;
+#endif
     }
 }
-
-int ULog::m_iTriggerCount = 100;
 
 ULog::ULog(QObject *parent) : QObject(parent)
 {
@@ -123,15 +126,12 @@ ULog::ULog(QObject *parent) : QObject(parent)
     this->OpenLogFile(logPath);
 
     qInstallMessageHandler(SelfLogOutputHandler);
-
-    connect(&m_writeLogTmr, SIGNAL(timeout()), this, SLOT(OnPeriodWriteLog()));
-    m_writeLogTmr.start(1000);
 }
 
 ULog::~ULog()
 {
     if(m_file.isOpen()) {
-        WriteLogToFile();
+        m_file.flush();
         m_file.close();
     }
 }
@@ -231,12 +231,9 @@ int ULog::AddLog(ELogLevel level, QString aValue)
     loginfo = QString("[%1][%2]%3\r\n").arg(datetime).arg(logtype).arg(aValue);
     QByteArray msg = loginfo.toUtf8();
 
-    OutputDebugStringA(loginfo.toLocal8Bit().constData());
-
-    m_szLogs.append(loginfo);
-    if(m_szLogs.size() >= m_iTriggerCount) {
-        WriteLogToFile();
-    }
+    m_file.seek(m_file.size());
+    m_file.write(msg.data());
+    m_file.flush();
 
     return 1;
 }
@@ -256,12 +253,16 @@ QString ULog::GetSystemInfo()
     out << " Application Build Time:   " << QString(__DATE__) << " " << QString(__TIME__) << endl;
 
     QSysInfo systemInfo;
+#ifdef Q_OS_WIN
     out << " Windows Version:          " << systemInfo.windowsVersion()         << endl;
+#endif
     out << " Build Cpu Architecture:   " << systemInfo.buildCpuArchitecture()   << endl;
     out << " Current Cpu Architecture: " << systemInfo.currentCpuArchitecture() << endl;
     out << " Kernel Type:              " << systemInfo.kernelType()             << endl;
     out << " Kernel Version:           " << systemInfo.kernelVersion()          << endl;
+#ifdef Q_OS_WIN
     out << " Machine Host Name:        " << systemInfo.machineHostName()        << endl;
+#endif
     out << " Product Type:             " << systemInfo.productType()            << endl;
     out << " Product Version:          " << systemInfo.productVersion()         << endl;
     out << " Byte Order:               " << systemInfo.buildAbi()               << endl;
@@ -289,30 +290,6 @@ QString ULog::GetSystemInfo()
     out << "availableSize:" << storageCurrent.bytesAvailable() / 1000 / 1000 << "MB" << endl;
 
     return s;
-}
-
-void ULog::WriteLogToFile()
-{
-    QStringList tmpLogs;
-    while(!m_szLogs.empty()) {
-        tmpLogs.append(m_szLogs.takeFirst());
-    }
-
-    QString szTmpLogs = "";
-    foreach(QString szLog, tmpLogs) {
-        szTmpLogs += szLog;
-    }
-
-    m_file.seek(m_file.size());
-    m_file.write(szTmpLogs.toUtf8().data());
-    m_file.flush();
-}
-
-void ULog::OnPeriodWriteLog()
-{
-    if(m_szLogs.size() > 0) {
-        WriteLogToFile();
-    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

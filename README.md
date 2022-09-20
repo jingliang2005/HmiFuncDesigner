@@ -2,11 +2,7 @@
 
 ​    **HmiFuncDesigner是一款集HMI，数据采集于一体的软件，开源旨在技术分享、相互学习、提升技术。目前软件处于开发中，功能不完善，很多代码也需要重构，但是我相信在不久的将来本软件功能会更加完善！如果这份代码有幸被你看到了，而且对此也有兴趣，那么期待你的加入！！**
 
-
-
 **本源码参考了SoftBox设计思路，在此特别感谢SoftBox的作者！**
-
-
 
 ### 1. 代码下载 How to download HmiFuncDesigner code
 
@@ -15,11 +11,9 @@
 
 ### 2. 软件环境 Software development environment
 
-​    1.**Qt5.10.1 + MinGW530_32** 
+​    1.**Qt5.14.2+mingw73_32** 
 
-​    2.**软件安装时必须包含Qt Script 模块**
-
-​    3.**如果需要在Visual Studio下编译并不产生乱码，请参考文档 (doc/Visual Studio utf8-NOBOM.docx)**
+​    2.**如果需要在Visual Studio下编译并不产生乱码，请参考文档 (doc/Visual Studio utf8-NOBOM.docx)**
 
 ### 3. HmiFuncDesigner软件编译 How the HmiFuncDesigner compiles
 
@@ -35,7 +29,7 @@
 
 6. **编译完成功后生成的软件位于HmiFuncDesignerBin/bin目录下。**
 
-7. **拷贝所需要的运行库，打开命令窗口“Qt 5.10.1 for Desktop (MinGW 5.3.0 32 bit)”，HmiFuncDesignerBin/bin目录，执行windeployqt 软件名称.exe。**
+7. **拷贝所需要的运行库，打开命令窗口“Qt 5.14.2 for Desktop (MinGW 7.3.0 32-bit)”，HmiFuncDesignerBin/bin目录，执行windeployqt 软件名称.exe。**
    
    **具体操作如下图所示：**
    
@@ -47,7 +41,7 @@
 
 1. **必须先编译HmiFuncDesigner然后再编译HmiRunTime工程。否则会出现找不到连接库。**
 
-2. **打开"Qt Creator 4.5.1 (Community)"软件，打开HmiRunTime/HmiRunTime.pro工程。**
+2. **打开"Qt Creator 4.11.1 (Community)"软件，打开HmiRunTime/HmiRunTime.pro工程。**
 
 3. **选择Release模式。**
 
@@ -57,7 +51,7 @@
 
 6. **编译完成功后生成的软件位于RuntimeBin目录下。**
 
-7. **拷贝所需要的运行库，打开命令窗口“Qt 5.10.1 for Desktop (MinGW 5.3.0 32 bit)”，RuntimeBin目录，执行windeployqt 软件名称.exe。**
+7. **拷贝所需要的运行库，打开命令窗口“Qt 5.14.2 for Desktop (MinGW 7.3.0 32-bit)”，RuntimeBin目录，执行windeployqt 软件名称.exe。**
 
 ### 5. HmiFuncDesigner工程管理器 ProjectManager HmiFuncDesigner
 
@@ -119,8 +113,8 @@
 
 **QQ交流群:568268522**
 
-#### 如果觉得代码写的还可以的话，请赏一个Star吧！
+#### 如果觉得代码写的还可以的话，请随手点一个Star吧或者请作者喝茶、和咖啡提神Coding！
 
 #### **您的支持是我继续前行的动力！！！**
 
-![JasonWang_qrcode](md/JasonWang_qrcode.png)
+![JasonWang_qrcode](md/JasonWang_qrcode.jpg)
